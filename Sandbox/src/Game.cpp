@@ -1,6 +1,11 @@
 #include "stdfax.h"
 #include "Game.h"
 
+Game::Game()
+{
+	Application::CLcontext()->PrintDeviceInfo();
+}
+
 void Game::Tick(float dt)
 {
 	int third = Application::RenderHeight() / 3;

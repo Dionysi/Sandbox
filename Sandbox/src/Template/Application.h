@@ -24,6 +24,11 @@ public:
 	* Retrieve the active render-surface.
 	*/
 	static Surface* RenderSurface();
+	/*
+	* Retrieve the global cl context.
+	* @returns		Valid cl context object.
+	*/
+	static clContext* CLcontext();
 
 	/*
 	* Retrieve the window's width.
@@ -47,6 +52,11 @@ public:
 	static uint RenderHeight();
 
 private:
+	/*
+	* Global OpenCL context.
+	*/
+	static clContext* s_clContext;
+
 	/*
 	* Window size.
 	*/
@@ -78,5 +88,8 @@ private:
 	* Initializes the Dear ImGui library.
 	*/
 	static void InitImGui();
-
+	/*
+	* Initializes the OpenCL context.
+	*/
+	static void InitOpenCL();
 };

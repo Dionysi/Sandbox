@@ -13,6 +13,7 @@ uint Application::s_WindowHeight = 0;
 bool Application::s_Initialized = false;
 GLFWwindow* Application::s_Window = nullptr;
 Surface* Application::s_RenderSurface = nullptr;
+clContext* Application::s_clContext = nullptr;
 
 int main() {
 	Application::Initialize(1024, 1024);
@@ -32,6 +33,7 @@ void Application::Initialize(uint width, uint height)
 
 	Application::InitGLFW();
 	Application::InitImGui();
+	Application::InitOpenCL();
 	Input::Initialize(Application::Window());
 
 	s_RenderSurface = new Surface(s_RenderWidth, s_RenderHeight);
@@ -90,6 +92,11 @@ GLFWwindow* Application::Window()
 Surface* Application::RenderSurface()
 {
 	return s_RenderSurface;
+}
+
+clContext* Application::CLcontext()
+{
+	return s_clContext;
 }
 
 uint Application::WindowWidth()
@@ -161,4 +168,9 @@ void Application::InitImGui()
 	ImGui_ImplOpenGL3_Init("#version 330");
 	// Setup Dear ImGui style
 	ImGui::StyleColorsDark();
+}
+
+void Application::InitOpenCL()
+{
+	s_clContext = new clContext(true);
 }
