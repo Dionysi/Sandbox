@@ -23,7 +23,7 @@ public:
 	/*
 	* Retrieve the active render-surface.
 	*/
-	static Surface* RenderSurface();
+	static Surface* Screen();
 	/*
 	* Retrieve the global cl context.
 	* @returns		Valid cl context object.

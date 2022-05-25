@@ -70,7 +70,7 @@ void Application::Run()
 
 
 		// Render our render-target.
-		Application::RenderSurface()->Draw();
+		Application::Screen()->Draw();
 
 		game->RenderGUI(dt);
 
@@ -89,7 +89,7 @@ GLFWwindow* Application::Window()
 	return s_Window;
 }
 
-Surface* Application::RenderSurface()
+Surface* Application::Screen()
 {
 	return s_RenderSurface;
 }
