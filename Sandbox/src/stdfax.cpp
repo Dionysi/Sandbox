@@ -308,13 +308,12 @@ void clContext::GetPlatformAndDevice() {
 			if (strstr(pInfo, "NVIDIA") || strstr(pInfo, "AMD"))
 				if (CL_ERROR(clGetDeviceIDs(platforms[i], CL_DEVICE_TYPE_GPU, 1, &m_DeviceID, NULL), "unable to retrieve devices")) {
 					m_PlatformID = platforms[i];
-					// For some reason, if we free platforms and pInfo we get an exception.
+					free(platforms);
 					return;
 				}
 	}
 
 	free(platforms);
-	free(pInfo);
 
 	FATAL_ERROR("Unable to find a suitable GPU.");
 }
