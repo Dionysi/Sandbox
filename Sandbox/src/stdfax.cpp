@@ -448,7 +448,7 @@ void clProgram::BuildProgram(clContext* context) {
 		log[2048] = 0; // Truncate very long logs.
 		printf("\n%s\n", log);
 
-		throw std::exception();
+		FATAL_ERROR("Failed to build the OpenCL program:\n%s\n", log);
 	}
 }
 
