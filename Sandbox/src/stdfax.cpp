@@ -436,7 +436,7 @@ void clProgram::CreateProgram(clContext* context, const char* path) {
 void clProgram::BuildProgram(clContext* context) {
 	cl_int buildStatus =
 		clBuildProgram(m_Program, 1, &context->GetDeviceID(),
-			"-I \"../../../core/src/rendering\" -cl-fast-relaxed-math -cl-mad-enable -cl-denorms-are-zero -cl-no-signed-zeros -cl-unsafe-math-optimizations -cl-finite-math-only",
+			"-cl-fast-relaxed-math -cl-mad-enable -cl-denorms-are-zero -cl-no-signed-zeros -cl-unsafe-math-optimizations -cl-finite-math-only",
 			NULL, NULL
 		);
 
