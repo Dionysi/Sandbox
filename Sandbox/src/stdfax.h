@@ -1,4 +1,6 @@
 #pragma once
+#define NOMINMAX
+
 #include <glm/glm.hpp>
 #include <vector>
 #include <string>
