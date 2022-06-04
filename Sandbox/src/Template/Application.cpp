@@ -36,6 +36,8 @@ void Application::Initialize(uint width, uint height)
 	Application::InitOpenCL();
 	Input::Initialize(Application::Window());
 
+	JobManager::Initialize();
+
 	s_RenderSurface = new Surface(s_RenderWidth, s_RenderHeight);
 
 	// Set the Game to be initialized.

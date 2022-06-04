@@ -499,3 +499,77 @@ private:
 
 };
 #pragma endregion
+
+#pragma region JobManager
+class Job {
+
+public:
+	virtual void Execute() = 0;
+};
+
+class WorkerThread {
+
+public:
+	/* Initializes the WorkerThread.
+	* @param[in] lCoreID		ID of the logical core to which the thread is pinned.
+	*/
+	void Initialize(unsigned int lCoreID);
+	/* Starts the thread's main-loop. */
+	void Run();
+
+private:
+	/* Befriend the JobManager. */
+	friend class JobManager;
+	/* ID of the logical core on which the thread is processed. */
+	unsigned int m_LogicalCoreID;
+	/* Handle to the thread object. */
+	HANDLE m_ThreadHandle, m_StartEvent;
+};
+
+/*
+* Job manager (Singleton) who manages the multithreaded job-system.
+* Based on Jacco Bikker's template (https://github.com/jbikker/tmpl8).
+*/
+class JobManager {
+
+public:
+	/* Initializes the JobManager. Returns if previously initialized. */
+	static void Initialize();
+	/* Terminates the JobManager. Returns if not previously initialized. */
+	static void Terminate();
+
+	/* Add a new Job to the Job pool.
+	* @param[in] job		Pointer to a valid Job object.
+	*/
+	static void QueueJob(Job* job);
+	/* Retrieve the next Job.
+	* @returns		A previously queued Job.
+	*/
+	static Job* GetNextJob();
+	/* Signal that a thread is done.
+	* @param[in] threadID		ID of the thread that finished.
+	*/
+	static void ThreadDone(unsigned int threadID);
+
+	/* Execute all previously queued jobs and waits until they have finished. */
+	static void ExecuteJobs();
+
+private:
+	/* True if Initialize() was called. */
+	static bool m_Initialized;
+	/* Number of worker-threads. */
+	static unsigned int m_NumWorkerThreads;
+	/* Pool of worker threads. */
+	static WorkerThread* m_ThreadPool;
+	/* Array of events (one per worker thread) used to signal that a thread has finished. */
+	static HANDLE* m_ThreadFinishedEvents;
+
+	/* Indicates the total number of jobs remaining in the job-pool. */
+	static unsigned int m_JobsRemaining;
+	/* Array containing the jobs waiting in the pool to be executed. */
+	static Job** m_JobPool;
+
+	/* Critical section used for locking the job-retrieval. */
+	static CRITICAL_SECTION m_CriticalSection;
+};
+#pragma endregion

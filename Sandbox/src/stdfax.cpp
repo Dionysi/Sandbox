@@ -2,6 +2,8 @@
 #include <stdarg.h>     /* va_list, va_start, va_arg, va_end */
 #include <fstream>
 
+#define MAX_JOBS 1024
+
 
 
 void FATAL_ERROR(const char* format, ...) {
@@ -757,4 +759,104 @@ void clKernel::Enqueue(clCommandQueue* queue, unsigned int workDim, size_t* glob
 		"Failed to enqueue kernel."
 	);
 }
+#pragma endregion
+
+
+#pragma region JobManager
+/* --- Static variable declarations. --- */
+bool JobManager::m_Initialized = false;
+unsigned int JobManager::m_NumWorkerThreads = 0;
+unsigned int JobManager::m_JobsRemaining = 0;
+WorkerThread* JobManager::m_ThreadPool = nullptr;
+Job** JobManager::m_JobPool;
+CRITICAL_SECTION JobManager::m_CriticalSection;
+HANDLE* JobManager::m_ThreadFinishedEvents;
+
+DWORD WorkerThreadProc(LPVOID lpParameter) {
+	WorkerThread* thread = (WorkerThread*)lpParameter;
+	thread->Run();
+	return 0;
+}
+
+void JobManager::Initialize() {
+	if (m_Initialized) return;
+
+	// Retrieve the number of logical processors.
+	SYSTEM_INFO sysInfo; GetSystemInfo(&sysInfo);
+	m_NumWorkerThreads = sysInfo.dwNumberOfProcessors;
+
+	// Initialize the worker threads.
+	m_ThreadPool = new WorkerThread[m_NumWorkerThreads];
+	m_ThreadFinishedEvents = new HANDLE[m_NumWorkerThreads];
+	for (unsigned int t = 0; t < m_NumWorkerThreads; t++)
+		m_ThreadPool[t].Initialize(t), m_ThreadFinishedEvents[t] = CreateEventA(NULL, false, false, NULL);
+
+	// Initialize the JobPool.
+	m_JobPool = new Job * [MAX_JOBS];
+	m_JobsRemaining = 0;
+
+	InitializeCriticalSection(&m_CriticalSection);
+
+	m_Initialized = true;
+}
+
+void JobManager::Terminate() {
+	if (!JobManager::m_Initialized) return;
+
+	DeleteCriticalSection(&m_CriticalSection);
+
+	delete m_ThreadPool;
+	delete m_JobPool;
+	delete m_ThreadFinishedEvents;
+
+	m_Initialized = false;
+}
+
+void JobManager::QueueJob(Job* job) {
+	JobManager::m_JobPool[m_JobsRemaining++] = job;
+}
+
+Job* JobManager::GetNextJob() {
+	Job* job = nullptr;
+	EnterCriticalSection(&m_CriticalSection);
+	if (m_JobsRemaining > 0) job = m_JobPool[--m_JobsRemaining];
+	LeaveCriticalSection(&m_CriticalSection);
+	return job;
+}
+
+void JobManager::ThreadDone(unsigned int threadID) {
+	SetEvent(m_ThreadFinishedEvents[threadID]);
+}
+
+void JobManager::ExecuteJobs() {
+	for (unsigned int t = 0; t < m_NumWorkerThreads; t++) SetEvent(m_ThreadPool[t].m_StartEvent);
+	WaitForMultipleObjects(m_NumWorkerThreads, m_ThreadFinishedEvents, true, INFINITE);
+}
+
+void WorkerThread::Initialize(unsigned int lCoreID) {
+	m_StartEvent = CreateEventA(NULL, FALSE, FALSE, NULL);
+	m_ThreadHandle = CreateThread(NULL, NULL, (LPTHREAD_START_ROUTINE)&WorkerThreadProc, (LPVOID)this, 0, 0);
+	SetThreadAffinityMask(m_ThreadHandle, (DWORD_PTR)(1) << lCoreID);	// Pin thread to a single core.
+	m_LogicalCoreID = lCoreID;
+}
+
+void WorkerThread::Run() {
+
+	while (true) {
+		// Wait for the worker-thread to start running.
+		WaitForSingleObject(m_StartEvent, INFINITE);
+
+		Job* nextJob = JobManager::GetNextJob();
+
+		// Start Job-handling process.
+		while (nextJob) {
+			nextJob->Execute();
+			nextJob = JobManager::GetNextJob();
+		}
+
+		// Signal for the thread that it is done. 
+		JobManager::ThreadDone(m_LogicalCoreID);
+	}
+}
+
 #pragma endregion
