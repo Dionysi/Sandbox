@@ -77,10 +77,10 @@ void Surface::PlotPixels(Color* colors) {
 }
 
 void Surface::PlotPixels(Color* colors, uint dx, uint dy, uint width, uint height) {
-
-	for (uint i = dy; i < dy + height; i++) {
-		uint idx = dx + i * m_Width;
-		memcpy(&m_Pixels[idx], &colors[idx], sizeof(Color) * width);
+	// Loop over each row of pixels.
+	for (int y = 0; y < height; y++) {
+		// Compute the screen pixel index.
+		memcpy(&m_Pixels[dx + (y + dy) * m_Width], &colors[y * height], sizeof(Color) * width);
 	}
 }
 
