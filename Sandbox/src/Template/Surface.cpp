@@ -69,18 +69,19 @@ void Surface::SyncPixels(uint dx, uint dy, uint width, uint height)
 
 void Surface::PlotPixel(Color color, uint x, uint y)
 {
-	m_Pixels[x + y * m_Width] = color;
+	m_Pixels[x + (m_Height - y - 1) * m_Width] = color;
 }
 
 void Surface::PlotPixels(Color* colors) {
-	memcpy(m_Pixels, colors, sizeof(Color) * m_Width * m_Height);
+	for (int y = 0; y < m_Height; y++)
+		memcpy(m_Pixels, &colors[(m_Height - y - 1) * m_Width], sizeof(Color) * m_Width);
 }
 
 void Surface::PlotPixels(Color* colors, uint dx, uint dy, uint width, uint height) {
+	dy = m_Height - dy - 1;
 	// Loop over each row of pixels.
 	for (int y = 0; y < height; y++) {
 		// Compute the screen pixel index.
-		memcpy(&m_Pixels[dx + (y + dy) * m_Width], &colors[y * height], sizeof(Color) * width);
+		memcpy(&m_Pixels[dx + (dy - y) * m_Width], &colors[y * height], sizeof(Color) * width);
 	}
 }
-
