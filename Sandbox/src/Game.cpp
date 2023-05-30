@@ -14,12 +14,13 @@ void Game::Tick(float dt)
 void Game::Draw(float dt)
 {
 	// Rendering goes here.
+
 }
 
 void Game::RenderGUI(float dt)
-{	
+{
 	// GUI code goes here. 
-	
+
 	// feed inputs to dear imgui, start new frame
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplGlfw_NewFrame();
@@ -28,7 +29,7 @@ void Game::RenderGUI(float dt)
 	const static char* windowTitle = "Debug";
 	static bool display = true;
 	ImGui::Begin(windowTitle, &display, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize);
-	ImGui::SetWindowFontScale(1.75f);
+	ImGui::SetWindowFontScale(1.25f);
 	ImGui::Text("Frame-time: %.1f", dt * 1000.0f);
 	ImGui::End();
 

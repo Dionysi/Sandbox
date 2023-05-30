@@ -39,19 +39,19 @@ void DisableGLdebugInfo();
 #pragma endregion
 
 struct Color {
-	Color() : r(0.0f), g(0.0f), b(0.0f), a(0.0f) {}
-	Color(float val) : r(val), g(val), b(val), a(1.0f) {}
-	Color(float r, float g, float b) : r(r), g(g), b(b), a(1.0f) {}
-	Color(float r, float g, float b, float a) : r(r), g(g), b(b), a(a) {}
+	Color() : r(0), g(0), b(0), a(0) {}
+	Color(uchar val) { r = val, g = val, b = val, a = 255; }
+	Color(uchar r, uchar g, uchar b) { this->r = r, this->g = g, this->b = b, this->a = 255; }
+	Color(uchar r, uchar g, uchar b, uchar a) { this->r = r, this->g = g, this->b = b, this->a = a; }
 
-	Color operator/(float rhs);
-	Color operator/=(float rhs);
-	Color operator*(float rhs);
-	Color operator*=(float rhs);
-	Color operator+(float rhs);
-	Color operator+=(float rhs);
-	Color operator-(float rhs);
-	Color operator-=(float rhs);
+	Color operator/(unsigned char rhs);
+	Color operator/=(unsigned char rhs);
+	Color operator*(unsigned char rhs);
+	Color operator*=(unsigned char rhs);
+	Color operator+(unsigned char rhs);
+	Color operator+=(unsigned char rhs);
+	Color operator-(unsigned char rhs);
+	Color operator-=(unsigned char rhs);
 
 	Color operator/(Color rhs);
 	Color operator/=(Color rhs);
@@ -62,7 +62,8 @@ struct Color {
 	Color operator-(Color rhs);
 	Color operator-=(Color rhs);
 
-	float r, g, b, a;
+	uchar r, g, b, a;
+
 };
 
 #pragma region OpenCL

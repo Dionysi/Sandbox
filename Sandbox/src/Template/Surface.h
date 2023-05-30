@@ -32,8 +32,9 @@ public:
 	* @param[in] dy			y-offset.
 	* @param[in] width		Number of pixels in x-direction.
 	* @param[in] height		Number of pixels in y-direction.
+	* @param[in] pixels		Array containing pixel data.
 	*/
-	void SyncPixels(uint dx, uint dy, uint width, uint height);
+	void SyncPixels(uint dx, uint dy, uint width, uint height, Color* pixels);
 
 	/*
 	* Plot a single pixel.
@@ -56,6 +57,15 @@ public:
 	* @param[in] height		Number of pixels in y-direction.
 	*/
 	void PlotPixels(Color* colors, uint dx, uint dy, uint width, uint height);
+
+	/*
+	* Retrieve the surface's pixel buffer for direct manipulation.
+	* Note that the pixels need to be synced to the GPU before applying
+	* the changes visually.
+	*
+	* @returns			Pointer to the pixels.
+	*/
+	Color* PixelBuffer() { return m_Pixels; };
 
 	inline GLuint& GetRenderTexture() { return m_RenderTexture; }
 	inline unsigned int GetWidth() { return m_Width; }
@@ -96,12 +106,12 @@ private:
 	* UV-coordinates for sampling the render texture.
 	*/
 	const GLfloat c_UV[12] = {
-		0.0f, 0.0f,
 		0.0f, 1.0f,
-		1.0f, 1.0f,
-		1.0f, 1.0f,
+		0.0f, 0.0f,
 		1.0f, 0.0f,
-		0.0f, 0.0f
+		1.0f, 0.0f,
+		1.0f, 1.0f,
+		0.0f, 1.0f
 	};
 	/*
 	* Indices for drawing triangles.

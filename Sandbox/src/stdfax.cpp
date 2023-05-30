@@ -97,31 +97,31 @@ void DisableGLdebugInfo() {
 
 #pragma region Color
 
-Color Color::operator/(float rhs) {
+Color Color::operator/(unsigned char rhs) {
 	return Color(r / rhs, g / rhs, b / rhs, a / rhs);
 }
-Color Color::operator/=(float rhs) {
+Color Color::operator/=(unsigned char rhs) {
 	r /= rhs, g /= rhs, b /= rhs, a /= rhs;
 	return *this;
 }
-Color Color::operator*(float rhs) {
+Color Color::operator*(unsigned char rhs) {
 	return Color(r * rhs, g * rhs, b * rhs, a * rhs);
 }
-Color Color::operator*=(float rhs) {
+Color Color::operator*=(unsigned char rhs) {
 	r *= rhs, g *= rhs, b *= rhs, a *= rhs;
 	return *this;
 }
-Color Color::operator+(float rhs) {
+Color Color::operator+(unsigned char rhs) {
 	return Color(r + rhs, g + rhs, b + rhs, a + rhs);
 }
-Color Color::operator+=(float rhs) {
+Color Color::operator+=(unsigned char rhs) {
 	r += rhs, g += rhs, b += rhs, a += rhs;
 	return *this;
 }
-Color Color::operator-(float rhs) {
+Color Color::operator-(unsigned char rhs) {
 	return Color(r - rhs, g - rhs, b - rhs, a - rhs);
 }
-Color Color::operator-=(float rhs) {
+Color Color::operator-=(unsigned char rhs) {
 	r -= rhs, g -= rhs, b -= rhs, a -= rhs;
 	return *this;
 }

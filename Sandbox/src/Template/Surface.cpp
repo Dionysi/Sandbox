@@ -10,11 +10,12 @@ Surface::Surface(unsigned int width, unsigned int height)
 	// Create our render texture.
 	glGenTextures(1, &m_RenderTexture);
 	glBindTexture(GL_TEXTURE_2D, m_RenderTexture);
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, width, height, 0, GL_RGBA, GL_FLOAT, 0);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, 0);
 
 	glBindTexture(GL_TEXTURE_2D, 0);
 	// Initialize our shader.
@@ -40,7 +41,7 @@ Surface::~Surface() {
 	delete m_UVbuffer;
 	delete m_IndexBuffer;
 	delete m_Shader;
-	
+
 	free(m_Pixels);
 }
 
@@ -54,34 +55,38 @@ void Surface::Draw() {
 void Surface::SyncPixels()
 {
 	glBindTexture(GL_TEXTURE_2D, m_RenderTexture);
-	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, m_Width, m_Height, GL_RGBA, GL_FLOAT, (GLvoid*)m_Pixels);
+	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, m_Width, m_Height, GL_RGBA, GL_UNSIGNED_BYTE, (GLvoid*)m_Pixels);
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glFinish();
 }
 
-void Surface::SyncPixels(uint dx, uint dy, uint width, uint height)
+void Surface::SyncPixels(uint dx, uint dy, uint width, uint height, Color* pixels)
 {
 	glBindTexture(GL_TEXTURE_2D, m_RenderTexture);
-	glTexSubImage2D(GL_TEXTURE_2D, 0, dx, dy, width, height, GL_RGBA, GL_FLOAT, (GLvoid*)m_Pixels);
+	glTexSubImage2D(GL_TEXTURE_2D, 0, dx, dy, width, height, GL_RGBA, GL_UNSIGNED_BYTE, (GLvoid*)pixels);
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glFinish();
 }
 
 void Surface::PlotPixel(Color color, uint x, uint y)
 {
-	m_Pixels[x + (m_Height - y - 1) * m_Width] = color;
+	m_Pixels[x + y * m_Width] = color;
 }
 
-void Surface::PlotPixels(Color* colors) {
-	for (int y = 0; y < m_Height; y++)
-		memcpy(m_Pixels, &colors[(m_Height - y - 1) * m_Width], sizeof(Color) * m_Width);
+void Surface::PlotPixels(Color* colors)
+{
+	for (int y = 0; y < m_Height; y++) memcpy(m_Pixels, &colors[y * m_Width], sizeof(Color) * m_Width);
 }
 
 void Surface::PlotPixels(Color* colors, uint dx, uint dy, uint width, uint height) {
-	dy = m_Height - dy - 1;
+	// Check that we do never write outside of the pixel buffer.
+	assert(dx + width < m_Width);
+	assert(dy + height < m_Height);
+
 	// Loop over each row of pixels.
-	for (int y = 0; y < height; y++) {
+	for (int y = 0; y < height; y++)
+	{
 		// Compute the screen pixel index.
-		memcpy(&m_Pixels[dx + (dy - y) * m_Width], &colors[y * height], sizeof(Color) * width);
+		memcpy(&m_Pixels[dx + (dy + y) * m_Width], &colors[y * width], sizeof(Color) * width);
 	}
 }
