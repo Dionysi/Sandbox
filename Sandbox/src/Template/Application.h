@@ -92,4 +92,12 @@ private:
 	* Initializes the OpenCL context.
 	*/
 	static void InitOpenCL();
+
+	/*
+	* Callback function for when the window resizes.
+	* @param[in] window			GLFW window for which the event is triggered.
+	* @param[in] width			New window width.
+	* @param[in] height			New window height.
+	*/
+	static void WINDOW_RESIZE_CALLBACK(GLFWwindow* window, int width, int height);
 };

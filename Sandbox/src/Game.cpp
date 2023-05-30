@@ -24,21 +24,6 @@ void Game::Draw(float dt)
 {
 	// Rendering goes here.
 
-	for (int y = 0; y < Application::RenderHeight(); y++)
-	{
-		for (int x = 0; x < Application::RenderWidth(); x++)
-		{
-			Color color =
-			{
-				0,
-				(uchar)(255.0f * ((float)x / (float)Application::RenderWidth())),
-				(uchar)(255 - (uchar)(255.0f * (float)y / (float)Application::RenderHeight())),
-				(uchar)255
-			};
-			Application::Screen()->PlotPixel(color, x, y);
-		}
-	}
-
 	Application::Screen()->SyncPixels();
 }
 

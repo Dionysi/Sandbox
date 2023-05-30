@@ -134,12 +134,13 @@ void Application::InitGLFW()
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // To make MacOS happy; should not be needed
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // We don't want the old OpenGL 
-	glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+	glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
 
-	s_Window = glfwCreateWindow(s_WindowWidth, s_WindowHeight, "Sandbox", NULL, NULL);
+	s_Window = glfwCreateWindow(s_WindowWidth, s_WindowHeight, "Annotation Tool", NULL, NULL);
 	if (s_Window == NULL) FATAL_ERROR("Failed to create GLFW window.");
 
 	glfwSetWindowAspectRatio(s_Window, s_WindowWidth, s_WindowHeight);
+	glfwSetWindowSizeCallback(s_Window, WINDOW_RESIZE_CALLBACK);
 
 	// Initialize glew.
 	glfwMakeContextCurrent(s_Window);
@@ -175,4 +176,14 @@ void Application::InitImGui()
 void Application::InitOpenCL()
 {
 	s_clContext = new clContext(true);
+}
+
+void Application::WINDOW_RESIZE_CALLBACK(GLFWwindow* window, int width, int height)
+{
+	// Check if same window, not required but just to be sure.
+	if (window != s_Window) return;
+
+	// Resize the viewport.
+	glViewport(0, 0, width, height);
+	s_WindowWidth = width, s_WindowHeight = height;
 }
