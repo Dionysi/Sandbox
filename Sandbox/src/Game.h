@@ -1,5 +1,5 @@
 #pragma once
-#include "Template/Application.h"
+#include "template/Application.h"
 
 /*
 * Implement your game logic in this class. The order of function calls is:
@@ -17,6 +17,20 @@ private:
 	* For debugging purpose only.
 	*/
 	float m_AvgFrameTime = 0.0f;
+
+	/*
+	* Creates the main docking window.
+	*/
+	void guiMainDockingWindow();
+	/*
+	* Creates the viewport window for rendering the OpenGL texture.
+	*/
+	void guiViewportWindow();
+	/*
+	* Creates the debug information window.
+	* @param[in] dt			Time since previous update in seconds.
+	*/
+	void guiDebugWindow(float dt);
 
 public:
 	/*

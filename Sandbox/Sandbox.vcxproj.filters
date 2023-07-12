@@ -18,22 +18,22 @@
     <ClCompile Include="src\stdfax.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Template\Shader.cpp">
+    <ClCompile Include="src\template\Shader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Template\Surface.cpp">
+    <ClCompile Include="src\template\Surface.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Template\Application.cpp">
+    <ClCompile Include="src\template\Application.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Template\Input.cpp">
+    <ClCompile Include="src\template\Input.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Game.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Template\IOUtils.cpp">
+    <ClCompile Include="src\template\IOUtils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -41,22 +41,22 @@
     <ClInclude Include="src\stdfax.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Template\Shader.h">
+    <ClInclude Include="src\template\Shader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Template\Surface.h">
+    <ClInclude Include="src\template\Surface.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Template\Application.h">
+    <ClInclude Include="src\template\Application.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Template\Input.h">
+    <ClInclude Include="src\template\Input.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Game.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Template\IOUtils.h">
+    <ClInclude Include="src\template\IOUtils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

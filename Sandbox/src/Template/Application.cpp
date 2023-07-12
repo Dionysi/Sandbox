@@ -70,9 +70,9 @@ void Application::Run()
 		game->Tick(dt);
 		game->Draw(dt);
 
-
+		/* We do not draw to the screen anymore using the surface. Instead we render using ImGui. */
 		// Render our render-target.
-		Application::Screen()->Draw();
+		// Application::Screen()->Draw();
 
 		game->RenderGUI(dt);
 
@@ -84,6 +84,11 @@ void Application::Run()
 	}
 
 	delete game;
+}
+
+void Application::Terminate()
+{
+	glfwSetWindowShouldClose(s_Window, GLFW_TRUE);
 }
 
 GLFWwindow* Application::Window()
@@ -171,6 +176,9 @@ void Application::InitImGui()
 	ImGui_ImplOpenGL3_Init("#version 330");
 	// Setup Dear ImGui style
 	ImGui::StyleColorsDark();
+
+	// Enable the docking space for the tool.
+	ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 }
 
 void Application::InitOpenCL()

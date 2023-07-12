@@ -15,6 +15,10 @@ public:
 	* Start the application main-loop.
 	*/
 	static void Run();
+	/*
+	* Terminates the application.
+	*/
+	static void Terminate();
 
 	/*
 	* Retrieve the active GLFW window.

@@ -174,22 +174,22 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\Template\IOUtils.cpp" />
+    <ClCompile Include="src\template\IOUtils.cpp" />
     <ClCompile Include="src\Game.cpp" />
-    <ClCompile Include="src\Template\Input.cpp" />
-    <ClCompile Include="src\Template\Application.cpp" />
-    <ClCompile Include="src\Template\Shader.cpp" />
+    <ClCompile Include="src\template\Input.cpp" />
+    <ClCompile Include="src\template\Application.cpp" />
+    <ClCompile Include="src\template\Shader.cpp" />
     <ClCompile Include="src\stdfax.cpp" />
-    <ClCompile Include="src\Template\Surface.cpp" />
+    <ClCompile Include="src\template\Surface.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\Template\IOUtils.h" />
+    <ClInclude Include="src\template\IOUtils.h" />
     <ClInclude Include="src\Game.h" />
-    <ClInclude Include="src\Template\Input.h" />
-    <ClInclude Include="src\Template\Application.h" />
-    <ClInclude Include="src\Template\Shader.h" />
+    <ClInclude Include="src\template\Input.h" />
+    <ClInclude Include="src\template\Application.h" />
+    <ClInclude Include="src\template\Shader.h" />
     <ClInclude Include="src\stdfax.h" />
-    <ClInclude Include="src\Template\Surface.h" />
+    <ClInclude Include="src\template\Surface.h" />
   </ItemGroup>
   <ItemGroup>
     <CopyFileToFolders Include="assets\shaders\simple_tex.frag">
