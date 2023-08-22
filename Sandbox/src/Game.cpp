@@ -14,13 +14,14 @@ void Game::guiMainDockingWindow()
 		ImGuiWindowFlags_::ImGuiWindowFlags_NoCollapse |
 		//ImGuiWindowFlags_::ImGuiWindowFlags_NoDecoration |				// Do not use because docked windows are under the menu bar.
 		ImGuiWindowFlags_::ImGuiWindowFlags_NoResize |
-		ImGuiWindowFlags_::ImGuiWindowFlags_NoBringToFrontOnFocus);
+		ImGuiWindowFlags_::ImGuiWindowFlags_NoBringToFrontOnFocus))
+	{
 
+		// Create docking space.
 		ImGuiID dockspaceID = ImGui::GetID("main_dock");
 		ImGui::DockSpace(dockspaceID, ImVec2(0.0f, 0.0f),
-			ImGuiDockNodeFlags_::ImGuiDockNodeFlags_None
-		))
-	{
+			ImGuiDockNodeFlags_::ImGuiDockNodeFlags_None);
+
 		// Main menu bar.
 		if (ImGui::BeginMainMenuBar())
 		{
