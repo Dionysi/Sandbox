@@ -10,35 +10,36 @@ void Game::guiMainDockingWindow()
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
 
 	// Begin docking window.
-	ImGui::Begin("main", NULL,
+	if (ImGui::Begin("main", NULL,
 		ImGuiWindowFlags_::ImGuiWindowFlags_NoCollapse |
 		//ImGuiWindowFlags_::ImGuiWindowFlags_NoDecoration |				// Do not use because docked windows are under the menu bar.
 		ImGuiWindowFlags_::ImGuiWindowFlags_NoResize |
 		ImGuiWindowFlags_::ImGuiWindowFlags_NoBringToFrontOnFocus);
 
-	ImGuiID dockspaceID = ImGui::GetID("main_dock");
-	ImGui::DockSpace(dockspaceID, ImVec2(0.0f, 0.0f),
-		ImGuiDockNodeFlags_::ImGuiDockNodeFlags_None
-	);
-
-	// Main menu bar.
-	if (ImGui::BeginMainMenuBar())
+		ImGuiID dockspaceID = ImGui::GetID("main_dock");
+		ImGui::DockSpace(dockspaceID, ImVec2(0.0f, 0.0f),
+			ImGuiDockNodeFlags_::ImGuiDockNodeFlags_None
+		))
 	{
-		// File IO menu functions.
-		if (ImGui::BeginMenu("File"))
+		// Main menu bar.
+		if (ImGui::BeginMainMenuBar())
 		{
-			// Menu item for loading projects.
-			bool itemClicked = false;
-			if (ImGui::MenuItem("Exit", "Esc", &itemClicked))
+			// File IO menu functions.
+			if (ImGui::BeginMenu("File"))
 			{
-				Application::Terminate();
+				// Menu item for loading projects.
+				bool itemClicked = false;
+				if (ImGui::MenuItem("Exit", "Esc", &itemClicked))
+				{
+					Application::Terminate();
+				}
+
+				ImGui::EndMenu();
 			}
 
-			ImGui::EndMenu();
+
+			ImGui::EndMainMenuBar();
 		}
-
-
-		ImGui::EndMainMenuBar();
 	}
 
 	ImGui::End();
@@ -53,45 +54,45 @@ void Game::guiViewportWindow()
 	ImGuiWindowFlags flags = ImGuiWindowFlags_::ImGuiWindowFlags_None | ImGuiWindowFlags_::ImGuiWindowFlags_NoCollapse;
 	ImTextureID textureID = (void*)Application::Screen()->GetRenderTexture();
 
-	ImGui::Begin("viewport", NULL, flags);
+	if (ImGui::Begin("viewport", NULL, flags))
+	{
+		// Size of the window in pixels.
+		ImVec2 canvasSize = ImGui::GetContentRegionAvail();
+		// Position of the window in pixel space.
+		ImVec2 canvasPos = ImGui::GetCursorScreenPos();
 
-	// Size of the window in pixels.
-	ImVec2 canvasSize = ImGui::GetContentRegionAvail();
-	// Position of the window in pixel space.
-	ImVec2 canvasPos = ImGui::GetCursorScreenPos();
+		// Render size. 
+		ImVec2 textureSize(Application::RenderWidth(), Application::RenderHeight());
 
-	// Render size. 
-	ImVec2 textureSize(Application::RenderWidth(), Application::RenderHeight());
+		// Calculate the scale at which we display the image.
+		ImVec2 textureScale = canvasSize / textureSize;
+		// Get the smallest of the two. 
+		float scale = glm::min(textureScale.x, textureScale.y);
 
-	// Calculate the scale at which we display the image.
-	ImVec2 textureScale = canvasSize / textureSize;
-	// Get the smallest of the two. 
-	float scale = glm::min(textureScale.x, textureScale.y);
+		// Window & render size.
+		ImVec2 wSize(Application::RenderWidth() * scale, Application::RenderHeight() * scale);
+		// Padding on the left of the image.
+		ImVec2 pSize = (canvasSize - wSize) / 2;
 
-	// Window & render size.
-	ImVec2 wSize(Application::RenderWidth() * scale, Application::RenderHeight() * scale);
-	// Padding on the left of the image.
-	ImVec2 pSize = (canvasSize - wSize) / 2;
+		ImGui::BeginGroup();
+		ImGui::PushStyleColor(ImGuiCol_FrameBg, 0xFF000000);
 
-	ImGui::BeginGroup();
-	ImGui::PushStyleColor(ImGuiCol_FrameBg, 0xFF000000);
+		// Padding window.
+		ImGui::BeginChildFrame(ImGui::GetID("padding_render_window"), pSize);
+		ImGui::EndChildFrame();
 
-	// Padding window.
-	ImGui::BeginChildFrame(ImGui::GetID("padding_render_window"), pSize);
-	ImGui::EndChildFrame();
-
-	// Create a child window in the middle of the screen.
-	if (textureScale.x > textureScale.y) ImGui::SameLine(0.0f, 0.0f);
-	ImGui::BeginChildFrame(ImGui::GetID("render_child_window"), wSize, ImGuiWindowFlags_::ImGuiWindowFlags_NoScrollbar);
-	ImGui::Image(textureID, wSize);
-	ImGui::EndChildFrame();
+		// Create a child window in the middle of the screen.
+		if (textureScale.x > textureScale.y) ImGui::SameLine(0.0f, 0.0f);
+		ImGui::BeginChildFrame(ImGui::GetID("render_child_window"), wSize, ImGuiWindowFlags_::ImGuiWindowFlags_NoScrollbar);
+		ImGui::Image(textureID, wSize);
+		ImGui::EndChildFrame();
 
 
-	ImGui::EndGroup();
-	ImGui::PopStyleColor();
+		ImGui::EndGroup();
+		ImGui::PopStyleColor();
+	}
 
 	ImGui::End();
-
 	ImGui::PopStyleVar(2);
 }
 
@@ -99,10 +100,12 @@ void Game::guiDebugWindow(float dt)
 {
 	const static char* windowTitle = "Debug";
 	static bool display = true;
-	ImGui::Begin(windowTitle, &display, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize);
-	ImGui::SetWindowFontScale(1.25f);
-	ImGui::Text("Frame-time: %.1f", dt * 1000.0f);
-	ImGui::Text("Avg ft: %.1f", m_AvgFrameTime * 1000.0f);
+	if (ImGui::Begin(windowTitle, &display, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize))
+	{
+		ImGui::SetWindowFontScale(1.25f);
+		ImGui::Text("Frame-time: %.1f", dt * 1000.0f);
+		ImGui::Text("Avg ft: %.1f", m_AvgFrameTime * 1000.0f);
+	}
 	ImGui::End();
 }
 
