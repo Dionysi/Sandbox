@@ -9,6 +9,8 @@ uint Application::s_RenderWidth = 0;
 uint Application::s_RenderHeight = 0;
 uint Application::s_WindowWidth = 0;
 uint Application::s_WindowHeight = 0;
+float Application::s_xContentScale = 1.0f;
+float Application::s_yContentScale = 1.0f;
 
 bool Application::s_Initialized = false;
 GLFWwindow* Application::s_Window = nullptr;
@@ -126,6 +128,36 @@ uint Application::RenderHeight()
 	return s_RenderHeight;
 }
 
+float Application::GetContentScaleX()
+{
+	return s_xContentScale;
+}
+
+float Application::GetContentScaleY()
+{
+	return s_yContentScale;
+}
+
+void Application::ResizeRenderSize(unsigned int width, unsigned int height)
+{
+	delete s_RenderSurface;
+	s_RenderSurface = new Surface(width, height);
+	s_RenderWidth = width, s_RenderHeight = height;
+}
+
+void Application::SetWindowSize(unsigned int width, unsigned int height, bool resetAspectRatio)
+{
+	// Set aspect ratio.
+	if (resetAspectRatio) glfwSetWindowAspectRatio(s_Window, width, height);
+	// Set window size.
+	glfwSetWindowSize(s_Window, width, height);
+
+	// Reset width and height member variables.
+	int w, h; glfwGetWindowSize(s_Window, &w, &h);
+
+	s_WindowWidth = (uint)w, s_WindowHeight = (uint)h;
+}
+
 void Application::InitGLFW()
 {
 	// Initialize glfw.
@@ -144,8 +176,9 @@ void Application::InitGLFW()
 	s_Window = glfwCreateWindow(s_WindowWidth, s_WindowHeight, "Annotation Tool", NULL, NULL);
 	if (s_Window == NULL) FATAL_ERROR("Failed to create GLFW window.");
 
-	glfwSetWindowAspectRatio(s_Window, s_WindowWidth, s_WindowHeight);
+	//glfwSetWindowAspectRatio(s_Window, s_WindowWidth, s_WindowHeight);		// Uncomment to fix aspect ratio.
 	glfwSetWindowSizeCallback(s_Window, WINDOW_RESIZE_CALLBACK);
+	glfwSetWindowContentScaleCallback(s_Window, WINDOW_CONTENT_SCALE_CALLBACK);
 
 	// Initialize glew.
 	glfwMakeContextCurrent(s_Window);
@@ -179,6 +212,13 @@ void Application::InitImGui()
 
 	// Enable the docking space for the tool.
 	ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+
+	// Set the global font-scale based on GLFW's dpi.
+	float xscale, yscale;
+	glfwGetWindowContentScale(s_Window, &xscale, &yscale);
+	io.FontGlobalScale = glm::max(xscale, yscale);
+	// Set the global content scale values.
+	s_xContentScale = xscale, s_yContentScale = yscale;
 }
 
 void Application::InitOpenCL()
@@ -194,4 +234,12 @@ void Application::WINDOW_RESIZE_CALLBACK(GLFWwindow* window, int width, int heig
 	// Resize the viewport.
 	glViewport(0, 0, width, height);
 	s_WindowWidth = width, s_WindowHeight = height;
+}
+
+void Application::WINDOW_CONTENT_SCALE_CALLBACK(GLFWwindow* window, float xscale, float yscale)
+{
+	// Set the global font scale for ImGui.
+	ImGui::GetIO().FontGlobalScale = glm::max(xscale, yscale);
+	// Set the global values.
+	s_xContentScale = xscale, s_yContentScale = yscale;
 }
