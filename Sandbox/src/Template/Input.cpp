@@ -24,11 +24,29 @@ KeyState operator|(KeyState a, KeyState b) {
 * @param[in] action `GLFW_PRESS`, `GLFW_RELEASE` or `GLFW_REPEAT`.
 * @param[in] mods Bit field describing which modifier keys held down.
 */
-void InputKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
+void InputKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+	ImGuiIO& io = ImGui::GetIO();
+
+	ImGui_ImplGlfw_KeyCallback(window, key, scancode, action, mods);
+
+	// Let ImGui handle the keyboard input.
+	if (io.WantCaptureKeyboard) return;
+
 	// Key is released. 
 	if (action == GLFW_RELEASE) currentKeys[window][key] = KeyState::Pressed;
 	else if (action == GLFW_REPEAT) currentKeys[window][key] = KeyState::KeyDown;
 	else if (action == GLFW_PRESS) currentKeys[window][key] = KeyState::KeyDown;
+}
+
+void InputMouseCallback(GLFWwindow* window, int button, int action, int mods)
+{
+	ImGuiIO& io = ImGui::GetIO();
+
+	ImGui_ImplGlfw_MouseButtonCallback(window, button, action, mods);
+
+	// Let ImGui handle the keyboard input.
+	if (io.WantCaptureMouse) return;
 }
 
 GLFWwindow* Input::s_Window = nullptr;
@@ -41,6 +59,7 @@ void Input::Initialize(GLFWwindow* window) {
 	s_Window = window;
 	// Set the callback for the input helper.
 	glfwSetKeyCallback(window, InputKeyCallback);
+	glfwSetMouseButtonCallback(window, InputMouseCallback);
 
 	// Add a new mapping to the map of mappings.
 	KeyState* currentKeyStates = (KeyState*)malloc(sizeof(KeyState) * NUM_KEYS);
