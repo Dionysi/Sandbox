@@ -12,11 +12,19 @@ class Game
 
 private:
 
+	/* Debug member variables. */
+	
+	/*
+	* Indicates if we want to display the debug window.
+	*/
+	bool m_DisplayDebugWindow = true;
 	/*
 	* Average time it takes to process a frame.
 	* For debugging purpose only.
 	*/
 	float m_AvgFrameTime = 0.0f;
+
+	/* GUI functions. */
 
 	/*
 	* Creates the main docking window.
@@ -57,5 +65,10 @@ public:
 	* @param[in] dt				Time since previous call in seconds.
 	*/
 	void RenderGUI(float dt);
+	/*
+	* Handle user input.
+	* @param[in] dt				Time since previous call in seconds.
+	*/
+	void HandleInput(float dt);
 };
 

@@ -26,11 +26,11 @@ void Game::guiMainDockingWindow()
 		if (ImGui::BeginMainMenuBar())
 		{
 			// File IO menu functions.
-			if (ImGui::BeginMenu("File"))
+			if (ImGui::BeginMenu("\xef\x85\x9b File")) // "ICON_FA_FILE File"
 			{
 				// Menu item for loading projects.
 				bool itemClicked = false;
-				if (ImGui::MenuItem("Exit", "Esc", &itemClicked))
+				if (ImGui::MenuItem("\xef\x80\x91 Exit", "Ctrl+W", &itemClicked)) // "ICON_FA_POWER_OFF Exit"
 				{
 					Application::Terminate();
 				}
@@ -38,6 +38,16 @@ void Game::guiMainDockingWindow()
 				ImGui::EndMenu();
 			}
 
+			// View menu.
+			if (ImGui::BeginMenu("\xef\x81\xae View")) // "ICON_FA_EYE View"
+			{
+				// Toggle displaying the debug window.
+				if (ImGui::MenuItem("\xef\x86\x88 Debug", "Ctrl+Alt+D", &m_DisplayDebugWindow, true)) // "ICON_FA_BUG Debug"
+				{
+
+				}
+				ImGui::EndMenu();
+			}
 
 			ImGui::EndMainMenuBar();
 		}
@@ -49,9 +59,6 @@ void Game::guiMainDockingWindow()
 
 void Game::guiViewportWindow()
 {
-	ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
-	ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
-
 	ImGuiWindowFlags flags = ImGuiWindowFlags_::ImGuiWindowFlags_None | ImGuiWindowFlags_::ImGuiWindowFlags_NoCollapse;
 	ImTextureID textureID = (void*)Application::Screen()->GetRenderTexture();
 
@@ -61,6 +68,13 @@ void Game::guiViewportWindow()
 		ImVec2 canvasSize = ImGui::GetContentRegionAvail();
 		// Position of the window in pixel space.
 		ImVec2 canvasPos = ImGui::GetCursorScreenPos();
+
+		// Fetch the drawing list for the current ImGui window to which we are going to add.
+		ImDrawList* drawList = ImGui::GetWindowDrawList();
+		// ImGUI's user input.
+		ImGuiIO& io = ImGui::GetIO();
+		// ImGui style values.
+		ImGuiStyle& style = ImGui::GetStyle();
 
 		// Render size. 
 		ImVec2 textureSize(Application::RenderWidth(), Application::RenderHeight());
@@ -75,35 +89,18 @@ void Game::guiViewportWindow()
 		// Padding on the left of the image.
 		ImVec2 pSize = (canvasSize - wSize) / 2;
 
-		ImGui::BeginGroup();
-		ImGui::PushStyleColor(ImGuiCol_FrameBg, 0xFF000000);
-
-		// Padding window.
-		ImGui::BeginChildFrame(ImGui::GetID("padding_render_window"), pSize);
-		ImGui::EndChildFrame();
-
-		// Create a child window in the middle of the screen.
-		if (textureScale.x > textureScale.y) ImGui::SameLine(0.0f, 0.0f);
-		ImGui::BeginChildFrame(ImGui::GetID("render_child_window"), wSize, ImGuiWindowFlags_::ImGuiWindowFlags_NoScrollbar);
-		ImGui::Image(textureID, wSize);
-		ImGui::EndChildFrame();
-
-
-		ImGui::EndGroup();
-		ImGui::PopStyleColor();
+		drawList->AddImage(textureID, canvasPos + pSize, canvasPos + pSize + wSize);
 	}
-
 	ImGui::End();
-	ImGui::PopStyleVar(2);
 }
 
 void Game::guiDebugWindow(float dt)
 {
-	const static char* windowTitle = "Debug";
-	static bool display = true;
-	if (ImGui::Begin(windowTitle, &display, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize))
+	// Do not display the debug window when the user closes it.
+	if (!m_DisplayDebugWindow) return;
+
+	if (ImGui::Begin("Debug", &m_DisplayDebugWindow, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize))
 	{
-		ImGui::SetWindowFontScale(1.25f);
 		ImGui::Text("Frame-time: %.1f", dt * 1000.0f);
 		ImGui::Text("Avg ft: %.1f", m_AvgFrameTime * 1000.0f);
 	}
@@ -155,4 +152,23 @@ void Game::RenderGUI(float dt)
 	// Render dear imgui into screen
 	ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+}
+
+void Game::HandleInput(float dt)
+{
+	// Modifier keys.
+	bool modAlt = Input::KeyDown(Key::LeftAlt) || Input::KeyDown(Key::RightAlt);
+	bool modCtrl = Input::KeyDown(Key::LeftControl) || Input::KeyDown(Key::RightControl);
+
+	// Ctrl+W.
+	if (Input::KeyPressed(Key::W) && modCtrl)
+	{
+		Application::Terminate();
+	}
+
+	// Ctrl+Alt+D
+	if (Input::KeyPressed(Key::D) && modCtrl && modAlt)
+	{
+		m_DisplayDebugWindow = !m_DisplayDebugWindow;
+	}
 }

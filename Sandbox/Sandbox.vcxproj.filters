@@ -36,6 +36,12 @@
     <ClCompile Include="src\template\IOUtils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\gui\ImGuiStyle.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Template\HighResolutionTimer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\stdfax.h">
@@ -59,9 +65,16 @@
     <ClInclude Include="src\template\IOUtils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\gui\ImGuiStyle.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Template\HighResolutionTimer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CopyFileToFolders Include="assets\shaders\simple_tex.frag" />
     <CopyFileToFolders Include="assets\shaders\simple_tex.vert" />
+    <CopyFileToFolders Include="assets\fonts\fa-solid-900.ttf" />
   </ItemGroup>
 </Project>

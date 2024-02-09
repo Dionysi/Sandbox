@@ -80,6 +80,10 @@ public:
 
 private:
 	/*
+	* ImGui global context.
+	*/
+	static ImGuiContext* s_imContext;
+	/*
 	* Global OpenCL context.
 	*/
 	static clContext* s_clContext;

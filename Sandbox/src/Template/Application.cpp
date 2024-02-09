@@ -2,6 +2,9 @@
 #include "Application.h"
 #include "Game.h"
 #include <chrono>
+#include "gui/ImGuiStyle.h"
+#include "HighResolutionTimer.h"
+#include <IconFontCppHeaders/IconsFontAwesome5.h>
 
 
 // Initialize static member-variables. 
@@ -12,6 +15,7 @@ uint Application::s_WindowHeight = 0;
 float Application::s_xContentScale = 1.0f;
 float Application::s_yContentScale = 1.0f;
 
+ImGuiContext* Application::s_imContext = nullptr;
 bool Application::s_Initialized = false;
 GLFWwindow* Application::s_Window = nullptr;
 Surface* Application::s_RenderSurface = nullptr;
@@ -53,30 +57,18 @@ void Application::Run()
 	if (!s_Initialized) Initialize(1024, 1024);
 
 	// Initialize the game. 
-	Game* game = new Game();
+	Game game;
+	HighResolutionTimer timer;
 
-	// Variables for computing time passed per frame.
-	std::chrono::system_clock::time_point tp = std::chrono::system_clock::now();
-	std::chrono::system_clock::time_point tc = std::chrono::system_clock::now();
-	float dt = std::chrono::duration<float>(tc - tp).count() + 0.00001f;
-
-	while (!Input::KeyPressed(Key::Escape) && !glfwWindowShouldClose(Application::Window())) {
+	while (!glfwWindowShouldClose(Application::Window())) {
 		// Compute the time passed since last loop.
-		float dt = std::chrono::duration<float>(tc - tp).count() + 0.00001f;
-		tp = tc; tc = std::chrono::system_clock::now();
-		
-		glClearColor(0.102f, 0.117f, 0.141f, 0.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
+		float dt = (float)timer.ElapsedSeconds();
+		timer.Restart();
 
-
-		game->Tick(dt);
-		game->Draw(dt);
-
-		/* We do not draw to the screen anymore using the surface. Instead we render using ImGui. */
-		// Render our render-target.
-		// Application::Screen()->Draw();
-
-		game->RenderGUI(dt);
+		game.HandleInput(dt);
+		game.Tick(dt);
+		game.Draw(dt);
+		game.RenderGUI(dt);
 
 		// Update the Input singleton.
 		Input::Update();
@@ -85,7 +77,6 @@ void Application::Run()
 		glfwPollEvents();
 	}
 
-	delete game;
 }
 
 void Application::Terminate()
@@ -201,7 +192,7 @@ void Application::InitImGui()
 {
 	// Setup Dear ImGui context
 	IMGUI_CHECKVERSION();
-	ImGui::CreateContext();
+	s_imContext = ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO();
 
 	// Setup Platform/Renderer bindings
@@ -219,6 +210,26 @@ void Application::InitImGui()
 	io.FontGlobalScale = glm::max(xscale, yscale);
 	// Set the global content scale values.
 	s_xContentScale = xscale, s_yContentScale = yscale;
+	// Update the imgui rounding values.
+	ImGui::GetStyle().WindowRounding = 9.0f * glm::max(xscale, yscale);
+	ImGui::GetStyle().FrameRounding = 3.0f * glm::max(xscale, yscale);
+
+	float baseFontSize = 13.0f; // 13.0f is the size of the default font. Change to the font size you use.
+	float iconFontSize = baseFontSize * 2.0f / 3.0f; // FontAwesome fonts need to have their sizes reduced by 2.0f/3.0f in order to align correctly
+
+	ImFontConfig fontConfig;
+	io.Fonts->AddFontDefault(&fontConfig);
+
+	// merge in icons from Font Awesome
+	static const ImWchar icons_ranges[] = { ICON_MIN_FA, ICON_MAX_16_FA, 0 };
+	fontConfig.MergeMode = true;
+	fontConfig.PixelSnapH = true;
+	fontConfig.GlyphMinAdvanceX = iconFontSize;
+	io.Fonts->AddFontFromFileTTF(FONT_ICON_FILE_NAME_FAS, iconFontSize, &fontConfig, icons_ranges);
+
+	fontConfig.MergeMode = true;
+
+	ImGuiEx::AdjustStyleFromHue();
 }
 
 void Application::InitOpenCL()
