@@ -140,7 +140,7 @@
       <AdditionalDependencies>glew32.lib;glfw3.lib;OpenCL.lib;opengl32.lib;ImGui.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>copy "$(ProjectDir)glew32.dll" "$(SolutionDir)bin\$(Platform)\$(Configuration)"
+      <Command>copy /y /d "$(ProjectDir)*.dll" "$(OutDir)"
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -169,7 +169,7 @@
       <AdditionalDependencies>glew32.lib;glfw3.lib;OpenCL.lib;opengl32.lib;ImGui.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>copy "$(ProjectDir)glew32.dll" "$(SolutionDir)bin\$(Platform)\$(Configuration)"
+      <Command>copy /y /d "$(ProjectDir)*.dll" "$(OutDir)"
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
